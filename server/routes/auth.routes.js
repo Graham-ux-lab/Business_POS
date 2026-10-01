@@ -5,7 +5,17 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth.middleware');
-const JWT_SECRET = process.env.JWT_SECRET || 'development-secret';
+
+// Helper to safely parse permissions
+const parsePermissions = (perm) => {
+    if (!perm) return {};
+    if (typeof perm === 'object') return perm;
+    try {
+        return JSON.parse(perm);
+    } catch {
+        return {};
+    }
+};
 
 router.post('/login', [
     body('username').trim().notEmpty(),
@@ -35,9 +45,11 @@ router.post('/login', [
             return res.status(401).json({ success: false, message: 'Invalid credentials' });
         }
 
+        const permissions = parsePermissions(user.permissions);
+
         const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role_name, permissions: JSON.parse(user.permissions || '{}') },
-            JWT_SECRET,
+            { id: user.id, username: user.username, role: user.role_name, permissions },
+            process.env.JWT_SECRET,
             { expiresIn: rememberMe ? '30d' : '8h' }
         );
 
@@ -51,7 +63,8 @@ router.post('/login', [
                 username: user.username,
                 fullName: user.full_name,
                 email: user.email,
-                role: user.role_name
+                role: user.role_name,
+                permissions
             }
         });
     } catch (error) {
@@ -63,7 +76,7 @@ router.post('/login', [
 router.get('/verify', authenticateToken, async (req, res) => {
     try {
         const [users] = await pool.execute(
-            'SELECT u.id, u.username, u.full_name, u.email, r.name as role_name FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ? AND u.is_active = true',
+            'SELECT u.id, u.username, u.full_name, u.email, r.name as role, r.permissions FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ? AND u.is_active = true',
             [req.user.id]
         );
 
@@ -72,17 +85,15 @@ router.get('/verify', authenticateToken, async (req, res) => {
         }
 
         const user = users[0];
-        res.json({
-            success: true,
+        res.json({ 
+            success: true, 
             user: {
-                id: user.id,
-                username: user.username,
-                fullName: user.full_name,
-                email: user.email,
-                role: user.role_name
+                ...user,
+                permissions: parsePermissions(user.permissions)
             }
         });
     } catch (error) {
+        console.error('Verify error:', error);
         res.status(500).json({ success: false });
     }
 });
