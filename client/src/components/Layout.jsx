@@ -45,17 +45,25 @@ const cashierNavigation = [
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout, isAdmin } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const navigation = isAdmin ? adminNavigation : cashierNavigation;
 
   return (
-    <div className="flex h-screen bg-slate-50 dark:bg-gray-950 transition-colors">
-      <aside className={"bg-white dark:bg-gray-900 border-r border-slate-200 dark:border-gray-800 shadow-sm transition-all duration-300 flex flex-col " + (sidebarOpen ? 'w-64' : 'w-20')}>
+    <div className="flex min-h-screen bg-slate-50 transition-colors dark:bg-gray-950 md:h-screen md:min-h-0">
+      {mobileMenuOpen && (
+        <button
+          type="button"
+          aria-label="Close navigation menu"
+          className="fixed inset-0 z-40 bg-slate-950/50 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+      <aside className={"fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white shadow-sm transition-transform duration-300 dark:border-gray-800 dark:bg-gray-900 md:relative md:z-auto md:translate-x-0 " + (mobileMenuOpen ? 'translate-x-0 ' : '-translate-x-full ') + (sidebarOpen ? 'md:w-64' : 'md:w-20')}>
         <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-gray-800">
-          {sidebarOpen && (
-            <div className="flex items-center space-x-2">
+          <div className={'flex items-center space-x-2 ' + (!sidebarOpen ? 'md:hidden' : '')}>
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
                 <Store className="w-5 h-5 text-white" />
               </div>
@@ -63,13 +71,25 @@ const Layout = () => {
                 <span className="font-bold text-slate-800 dark:text-white text-sm">Business POS</span>
                 <p className="text-xs text-slate-400 dark:text-slate-500">{user?.role}</p>
               </div>
-            </div>
-          )}
+          </div>
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-gray-800 rounded-lg text-slate-600 dark:text-slate-300"
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => {
+              if (window.matchMedia('(min-width: 768px)').matches) setSidebarOpen(!sidebarOpen);
+              else setMobileMenuOpen(false);
+            }}
+            className="hidden rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-gray-800 md:block"
           >
             {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          <button
+            type="button"
+            aria-label="Close navigation"
+            onClick={() => setMobileMenuOpen(false)}
+            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-gray-800 md:hidden"
+          >
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -81,6 +101,7 @@ const Layout = () => {
               <Link
                 key={item.name}
                 to={item.href}
+                onClick={() => setMobileMenuOpen(false)}
                 className={
                   'flex items-center space-x-3 px-3 py-3 rounded-xl transition-all group ' +
                   (active
@@ -89,8 +110,8 @@ const Layout = () => {
                 }
               >
                 <Icon className={'w-5 h-5 flex-shrink-0 ' + (active ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300')} />
-                {sidebarOpen && <span>{item.name}</span>}
-                {active && sidebarOpen && <div className="ml-auto w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>}
+                <span className={!sidebarOpen ? 'md:hidden' : ''}>{item.name}</span>
+                {active && <div className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-500"></div>}
               </Link>
             );
           })}
@@ -101,17 +122,16 @@ const Layout = () => {
             onClick={toggleTheme}
             className={
               'w-full mb-3 flex items-center rounded-xl transition-colors bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800 ' +
-              (sidebarOpen ? 'justify-between px-3 py-2' : 'justify-center p-2')
+              (sidebarOpen ? 'justify-between px-3 py-2' : 'justify-center p-2 md:justify-center')
             }
             title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {sidebarOpen && <span className="text-sm font-semibold">{isDark ? 'Light mode' : 'Dark mode'}</span>}
+            <span className={!sidebarOpen ? 'md:hidden text-sm font-semibold' : 'text-sm font-semibold'}>{isDark ? 'Light mode' : 'Dark mode'}</span>
             {isDark ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5" />}
           </button>
 
           <div className="flex items-center justify-between">
-            {sidebarOpen && (
-              <div className="flex items-center space-x-3">
+              <div className={'flex min-w-0 items-center space-x-3 ' + (!sidebarOpen ? 'md:hidden' : '')}>
                 <div className="w-10 h-10 bg-gradient-to-br from-slate-300 to-slate-400 dark:from-gray-700 dark:to-gray-600 rounded-xl flex items-center justify-center">
                   <span className="text-white font-bold text-sm">{user?.fullName?.charAt(0)?.toUpperCase() || 'U'}</span>
                 </div>
@@ -123,7 +143,6 @@ const Layout = () => {
                   </p>
                 </div>
               </div>
-            )}
             <button
               onClick={logout}
               className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors group"
@@ -135,8 +154,20 @@ const Layout = () => {
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto bg-slate-50 dark:bg-gray-950 transition-colors">
-        <Outlet />
+      <main className="min-w-0 flex-1 overflow-auto bg-slate-50 transition-colors dark:bg-gray-950">
+        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-900/95 md:hidden">
+          <button type="button" aria-label="Open navigation" onClick={() => setMobileMenuOpen(true)} className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-gray-800">
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="flex min-w-0 items-center gap-2">
+            <Store className="h-5 w-5 shrink-0 text-emerald-600" />
+            <span className="truncate text-sm font-bold text-slate-800 dark:text-white">Business POS</span>
+          </div>
+          <span className="ml-auto truncate text-xs text-slate-500 dark:text-slate-400">{user?.fullName}</span>
+        </div>
+        <div className="min-w-0">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

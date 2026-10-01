@@ -89,17 +89,17 @@ const POS = () => {
   const quickAmounts = [50, 100, 200, 500, 1000, 2000];
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 dark:bg-gray-950 transition-colors duration-300">
+    <div className="flex h-[calc(100dvh-56px)] flex-col bg-slate-50 transition-colors duration-300 dark:bg-gray-950 md:h-screen">
       {/* Top Bar */}
-      <div className="bg-white dark:bg-gray-900 border-b border-slate-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between shadow-sm transition-colors">
-        <div className="flex items-center space-x-6">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-3 py-2 shadow-sm transition-colors dark:border-gray-800 dark:bg-gray-900 sm:px-6 sm:py-4">
+        <div className="flex min-w-0 items-center space-x-3 sm:space-x-6">
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Receipt className="w-5 h-5 text-white" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg sm:h-11 sm:w-11">
+              <Receipt className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-wide">Business POS Checkout</h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Retail sales desk · Inventory synced</p>
+              <h1 className="text-sm font-black tracking-wide text-slate-900 dark:text-white sm:text-xl">Business POS Checkout</h1>
+              <p className="hidden text-xs text-slate-500 dark:text-slate-400 sm:block">Retail sales desk · Inventory synced</p>
             </div>
           </div>
           <div className="hidden lg:flex items-center space-x-3 text-sm">
@@ -123,17 +123,17 @@ const POS = () => {
             <span className="text-gray-600 dark:text-gray-300">{greeting},</span>
             <span className="font-semibold text-gray-800 dark:text-white">{user?.fullName?.split(' ')[0]}</span>
           </div>
-          <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="hidden items-center space-x-2 text-sm text-gray-500 dark:text-gray-400 sm:flex">
             <Clock className="w-4 h-4" />
             <span className="font-mono">{currentTime.toLocaleTimeString()}</span>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
         {/* Products Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-slate-200 dark:border-gray-800 px-6 py-4 space-y-4 transition-colors">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="space-y-4 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur-sm transition-colors dark:border-gray-800 dark:bg-gray-900/90 sm:px-6 sm:py-4">
             <div className="relative">
               <ScanLine className="absolute left-4 top-3.5 text-emerald-500 w-5 h-5" />
               <input ref={searchInputRef} type="text" placeholder="Scan barcode or search products by name..."
@@ -162,8 +162,8 @@ const POS = () => {
           </div>
 
           {/* Products Grid */}
-          <div className="flex-1 overflow-y-auto p-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-6">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
               {filteredProducts.map(product => (
                 <button key={product.id} 
                   onClick={() => { 
@@ -213,7 +213,7 @@ const POS = () => {
         </div>
 
         {/* Cart Sidebar */}
-        <div className="w-[420px] bg-white dark:bg-gray-900 border-l border-slate-200 dark:border-gray-800 flex flex-col shadow-2xl transition-colors">
+        <div className="flex h-[42vh] max-h-[420px] w-full shrink-0 flex-col border-t border-slate-200 bg-white shadow-2xl transition-colors dark:border-gray-800 dark:bg-gray-900 lg:h-auto lg:max-h-none lg:w-[420px] lg:border-l lg:border-t-0">
           <div className="p-5 border-b border-slate-200 dark:border-gray-800 bg-gradient-to-r from-slate-50 to-white dark:from-gray-900 dark:to-gray-900">
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-black text-slate-800 dark:text-white flex items-center">
