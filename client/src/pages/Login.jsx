@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Store, User, Lock, Eye, EyeOff, Sparkles, ShoppingCart, TrendingUp, Package } from 'lucide-react';
 

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, AlertTriangle, TrendingUp, TrendingDown, Package, Edit2, Plus, Minus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';

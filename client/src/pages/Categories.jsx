@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, X, Save, FolderTree } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';

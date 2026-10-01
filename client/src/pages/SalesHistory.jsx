@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Search, Eye, Printer, X, Receipt, Calendar, Clock, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Eye, Printer, X, Receipt, Calendar, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 import ReceiptPrinter from '../components/ReceiptPrinter';
