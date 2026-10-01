@@ -24,8 +24,8 @@ router.get('/', async (req, res) => {
             params.push(category);
         }
 
-        query += ' ORDER BY p.created_at DESC LIMIT ? OFFSET ?';
-        params.push(parseInt(limit), parseInt(offset));
+        query += ' ORDER BY p.created_at DESC LIMIT ' + parseInt(limit) + ' OFFSET ' + parseInt(offset);
+        
 
         const [products] = await pool.execute(query, params);
         const [[{ total }]] = await pool.execute('SELECT COUNT(*) as total FROM products WHERE is_active = true');
